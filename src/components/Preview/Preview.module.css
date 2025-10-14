@@ -1,0 +1,23 @@
+.preview {
+  background-color: #ffffff;
+  color: #52514c;
+  min-height: 300px;
+  text-align: left;
+  margin: 15px;
+  border-radius: 20px;
+  padding: 0px 20px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+@media (orientation: landscape) {
+  .preview {
+    width: 46%;
+  }
+}
+
+@media (orientation: portrait) {
+  .preview {
+    width: 75%;
+  }
+}

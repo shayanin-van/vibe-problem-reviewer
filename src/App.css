@@ -1,0 +1,23 @@
+#root {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+.workArea {
+  display: flex;
+}
+
+@media (orientation: landscape) {
+  .workArea {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+@media (orientation: portrait) {
+  .workArea {
+    flex-direction: column;
+    align-items: center;
+  }
+}
