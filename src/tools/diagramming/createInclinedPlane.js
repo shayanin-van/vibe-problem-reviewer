@@ -1,20 +1,20 @@
 import * as dg from "diagramatics";
 import { formatLatexEquation } from "../utils/formatLatexEquation";
 
-export function createInclinedPlane(
-  parentDiv,
-  angle,
-  angleLabel,
-  isSmooth,
-  showFBD,
-  showGraviCompo,
-  massLabel,
-  normalLabel,
-  fricLabel,
-  graviLabel,
-  perGraviLabel,
-  parGraviLabel
-) {
+export function createInclinedPlane(parentDiv, parameters) {
+  // initialize parameters
+  let angle = parameters.angle;
+  let angleLabel = parameters.angleLabel;
+  let isSmooth = parameters.isSmooth;
+  let showFBD = parameters.showFBD;
+  let showGraviCompo = parameters.showGraviCompo;
+  let massLabel = parameters.massLabel;
+  let normalLabel = parameters.normalLabel;
+  let fricLabel = parameters.fricLabel;
+  let graviLabel = parameters.graviLabel;
+  let perGraviLabel = parameters.perGraviLabel;
+  let parGraviLabel = parameters.parGraviLabel;
+
   // handle MathJax
   let handletex = (str, conf) => {
     return MathJax.tex2svg(str, conf).innerHTML;

@@ -1,26 +1,20 @@
 import { useEffect, useRef } from "react";
 import styles from "./Diagram.module.css";
 import { createInclinedPlane } from "../../../tools/diagramming/createInclinedPlane";
+import { createMotionPath } from "../../../tools/diagramming/createMotionPath";
 
-function Diagram({ paramJson }) {
+function Diagram({ objJson }) {
   const divRef = useRef(null);
 
   useEffect(() => {
-    createInclinedPlane(
-      divRef.current,
-      paramJson.parameters.angle,
-      paramJson.parameters.angleLabel,
-      paramJson.parameters.isSmooth,
-      paramJson.parameters.showFBD,
-      paramJson.parameters.showGraviCompo,
-      paramJson.parameters.massLabel,
-      paramJson.parameters.normalLabel,
-      paramJson.parameters.fricLabel,
-      paramJson.parameters.graviLabel,
-      paramJson.parameters.perGraviLabel,
-      paramJson.parameters.parGraviLabel
-    );
-  }, [paramJson]);
+    if (objJson.name == "create_inclined_plane_diagram") {
+      createInclinedPlane(divRef.current, objJson.parameters);
+    } else if (objJson.name == "create_motion_path_diagram") {
+      createMotionPath(divRef.current, objJson.parameters);
+    } else {
+      divRef.current.innerHTML = "";
+    }
+  }, [objJson]);
 
   return <div ref={divRef} className={styles.diagram}></div>;
 }

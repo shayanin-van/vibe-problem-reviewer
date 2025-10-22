@@ -2,13 +2,10 @@
  * Detects specific JSON objects within a string and splits the string into an array,
  * separating the text content from the JSON objects.
  *
- * The function specifically looks for JSON objects with a 'name' property of
- * 'create_inclined_plane_diagram'.
- *
  * @param {string} inputString The string to parse, which may contain text and JSON objects.
  * @returns {string[]} An array where text segments object and valid JSON object are separate elements.
  */
-export function splitByInclinedPlaneJson(inputString) {
+export function splitByJson(inputString) {
   if (typeof inputString !== "string") {
     console.error("Input must be a string.");
     return [];
@@ -58,7 +55,7 @@ export function splitByInclinedPlaneJson(inputString) {
         if (
           jsonObj &&
           typeof jsonObj === "object" &&
-          jsonObj.name === "create_inclined_plane_diagram" &&
+          jsonObj.name &&
           jsonObj.parameters &&
           typeof jsonObj.parameters === "object"
         ) {
