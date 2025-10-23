@@ -13,7 +13,7 @@ import {
  */
 export async function fetchProblemsStructure() {
   try {
-    const problemsCol = collection(db, "test");
+    const problemsCol = collection(db, "99demo");
     const problemsSnapshot = await getDocs(problemsCol);
     const problems = {};
 
@@ -51,7 +51,7 @@ export async function fetchProblemsStructure() {
  */
 export async function fetchProblemById(problemId) {
   try {
-    const problemDoc = doc(db, "test", problemId);
+    const problemDoc = doc(db, "99demo", problemId);
     const problemSnapshot = await getDoc(problemDoc);
 
     if (problemSnapshot.exists()) {
@@ -76,7 +76,7 @@ export async function fetchProblemById(problemId) {
  */
 export async function updateProblem(problemId, problemData) {
   try {
-    const problemDoc = doc(db, "test", problemId);
+    const problemDoc = doc(db, "99demo", problemId);
     await updateDoc(problemDoc, problemData);
   } catch (error) {
     console.error("Error updating problem:", error);
