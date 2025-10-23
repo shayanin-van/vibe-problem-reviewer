@@ -8,30 +8,30 @@ import {
 } from "firebase/firestore";
 
 /**
- * Fetches all problems from Firestore and organizes them by unit > lesson > subtopic
+ * Fetches all problems from Firestore and organizes them by unit > pGreatSubtopic > kaiLevel
  * @returns {Promise<Object>} Organized problems structure
  */
 export async function fetchProblemsStructure() {
   try {
-    const problemsCol = collection(db, "99demo");
+    const problemsCol = collection(db, "production");
     const problemsSnapshot = await getDocs(problemsCol);
     const problems = {};
 
     problemsSnapshot.forEach((doc) => {
       const data = doc.data();
-      const { unit, lesson, subtopic } = data;
+      const { unit, pGreatSubtopic, kaiLevel } = data;
 
       if (!problems[unit]) {
         problems[unit] = {};
       }
-      if (!problems[unit][lesson]) {
-        problems[unit][lesson] = {};
+      if (!problems[unit][pGreatSubtopic]) {
+        problems[unit][pGreatSubtopic] = {};
       }
-      if (!problems[unit][lesson][subtopic]) {
-        problems[unit][lesson][subtopic] = [];
+      if (!problems[unit][pGreatSubtopic][kaiLevel]) {
+        problems[unit][pGreatSubtopic][kaiLevel] = [];
       }
 
-      problems[unit][lesson][subtopic].push({
+      problems[unit][pGreatSubtopic][kaiLevel].push({
         id: doc.id,
         ...data,
       });
@@ -51,7 +51,7 @@ export async function fetchProblemsStructure() {
  */
 export async function fetchProblemById(problemId) {
   try {
-    const problemDoc = doc(db, "99demo", problemId);
+    const problemDoc = doc(db, "production", problemId);
     const problemSnapshot = await getDoc(problemDoc);
 
     if (problemSnapshot.exists()) {
@@ -76,7 +76,7 @@ export async function fetchProblemById(problemId) {
  */
 export async function updateProblem(problemId, problemData) {
   try {
-    const problemDoc = doc(db, "99demo", problemId);
+    const problemDoc = doc(db, "production", problemId);
     await updateDoc(problemDoc, problemData);
   } catch (error) {
     console.error("Error updating problem:", error);

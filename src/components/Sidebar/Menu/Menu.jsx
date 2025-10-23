@@ -3,8 +3,8 @@ import { useState, useEffect, useRef } from "react";
 
 function Menu({ isShowed, setIsShowed, problemsStructure, onProblemSelect }) {
   const [expandedUnits, setExpandedUnits] = useState({});
-  const [expandedLessons, setExpandedLessons] = useState({});
-  const [expandedSubtopics, setExpandedSubtopics] = useState({});
+  const [expandedPGreatSubtopics, setExpandedPGreatSubtopics] = useState({});
+  const [expandedKaiLevels, setExpandedKaiLevels] = useState({});
   const menuRef = useRef(null);
 
   const toggleUnit = (unit) => {
@@ -14,17 +14,17 @@ function Menu({ isShowed, setIsShowed, problemsStructure, onProblemSelect }) {
     }));
   };
 
-  const toggleLesson = (unit, lesson) => {
-    const key = `${unit}-${lesson}`;
-    setExpandedLessons((prev) => ({
+  const togglePGreatSubtopic = (unit, pGreatSubtopic) => {
+    const key = `${unit}-${pGreatSubtopic}`;
+    setExpandedPGreatSubtopics((prev) => ({
       ...prev,
       [key]: !prev[key],
     }));
   };
 
-  const toggleSubtopic = (unit, lesson, subtopic) => {
-    const key = `${unit}-${lesson}-${subtopic}`;
-    setExpandedSubtopics((prev) => ({
+  const toggleKaiLevel = (unit, pGreatSubtopic, kaiLevel) => {
+    const key = `${unit}-${pGreatSubtopic}-${kaiLevel}`;
+    setExpandedKaiLevels((prev) => ({
       ...prev,
       [key]: !prev[key],
     }));
@@ -73,84 +73,93 @@ function Menu({ isShowed, setIsShowed, problemsStructure, onProblemSelect }) {
             </div>
 
             {expandedUnits[unit] && (
-              <div className={styles.lessons}>
-                {Object.keys(problemsStructure[unit]).map((lesson) => {
-                  const lessonKey = `${unit}-${lesson}`;
+              <div className={styles.pGreatSubtopics}>
+                {Object.keys(problemsStructure[unit]).map((pGreatSubtopic) => {
+                  const pGreatSubtopicKey = `${unit}-${pGreatSubtopic}`;
                   return (
-                    <div key={lesson} className={styles.lessonSection}>
+                    <div
+                      key={pGreatSubtopic}
+                      className={styles.pGreatSubtopicSection}
+                    >
                       <div
-                        className={styles.lessonHeader}
-                        onClick={() => toggleLesson(unit, lesson)}
+                        className={styles.pGreatSubtopicHeader}
+                        onClick={() =>
+                          togglePGreatSubtopic(unit, pGreatSubtopic)
+                        }
                       >
                         <span className={styles.arrow}>
-                          {expandedLessons[lessonKey] ? "▼" : "▶"}
+                          {expandedPGreatSubtopics[pGreatSubtopicKey]
+                            ? "▼"
+                            : "▶"}
                         </span>
-                        <span>{lesson}</span>
+                        <span>{pGreatSubtopic}</span>
                       </div>
 
-                      {expandedLessons[lessonKey] && (
-                        <div className={styles.subtopics}>
-                          {Object.keys(problemsStructure[unit][lesson]).map(
-                            (subtopic) => {
-                              const subtopicKey = `${unit}-${lesson}-${subtopic}`;
-                              return (
+                      {expandedPGreatSubtopics[pGreatSubtopicKey] && (
+                        <div className={styles.kaiLevels}>
+                          {Object.keys(
+                            problemsStructure[unit][pGreatSubtopic]
+                          ).map((kaiLevel) => {
+                            const kaiLevelKey = `${unit}-${pGreatSubtopic}-${kaiLevel}`;
+                            return (
+                              <div
+                                key={kaiLevel}
+                                className={styles.kaiLevelSection}
+                              >
                                 <div
-                                  key={subtopic}
-                                  className={styles.subtopicSection}
+                                  className={styles.kaiLevelHeader}
+                                  onClick={() =>
+                                    toggleKaiLevel(
+                                      unit,
+                                      pGreatSubtopic,
+                                      kaiLevel
+                                    )
+                                  }
                                 >
-                                  <div
-                                    className={styles.subtopicHeader}
-                                    onClick={() =>
-                                      toggleSubtopic(unit, lesson, subtopic)
-                                    }
-                                  >
-                                    <span className={styles.arrow}>
-                                      {expandedSubtopics[subtopicKey]
-                                        ? "▼"
-                                        : "▶"}
-                                    </span>
-                                    <span>{subtopic}</span>
-                                  </div>
-                                  {expandedSubtopics[subtopicKey] && (
-                                    <div className={styles.problems}>
-                                      {problemsStructure[unit][lesson][
-                                        subtopic
-                                      ].map((problem) => {
-                                        const questionPreview = problem.question
-                                          ? problem.question.substring(0, 50) +
-                                            (problem.question.length > 50
-                                              ? "..."
-                                              : "")
-                                          : "ไม่มีโจทย์";
-                                        return (
-                                          <div
-                                            key={problem.id}
-                                            className={`${styles.problemItem} ${
-                                              problem.isReviewed
-                                                ? styles.reviewedProblem
-                                                : ""
-                                            }`}
-                                            onClick={() =>
-                                              handleProblemClick(problem)
-                                            }
-                                          >
-                                            {questionPreview}
-                                            {problem.isReviewed && (
-                                              <span
-                                                className={styles.reviewedBadge}
-                                              >
-                                                ✓
-                                              </span>
-                                            )}
-                                          </div>
-                                        );
-                                      })}
-                                    </div>
-                                  )}
+                                  <span className={styles.arrow}>
+                                    {expandedKaiLevels[kaiLevelKey] ? "▼" : "▶"}
+                                  </span>
+                                  <span>{kaiLevel}</span>
                                 </div>
-                              );
-                            }
-                          )}
+                                {expandedKaiLevels[kaiLevelKey] && (
+                                  <div className={styles.problems}>
+                                    {problemsStructure[unit][pGreatSubtopic][
+                                      kaiLevel
+                                    ].map((problem) => {
+                                      const questionPreview = problem.question
+                                        ? problem.question.substring(0, 50) +
+                                          (problem.question.length > 50
+                                            ? "..."
+                                            : "")
+                                        : "ไม่มีโจทย์";
+                                      return (
+                                        <div
+                                          key={problem.id}
+                                          className={`${styles.problemItem} ${
+                                            problem.isReviewed
+                                              ? styles.reviewedProblem
+                                              : ""
+                                          }`}
+                                          onClick={() =>
+                                            handleProblemClick(problem)
+                                          }
+                                        >
+                                          {questionPreview}
+                                          {problem.isReviewed && (
+                                            <span
+                                              className={styles.reviewedBadge}
+                                            >
+                                              ✓
+                                            </span>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                       )}
                     </div>
