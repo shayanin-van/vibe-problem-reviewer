@@ -36,13 +36,13 @@
 }
 
 .unitSection,
-.pGreatSubtopicSection,
+.kaiSubtopicSection,
 .kaiLevelSection {
   margin-bottom: 5px;
 }
 
 .unitHeader,
-.pGreatSubtopicHeader {
+.kaiSubtopicHeader {
   padding: 10px;
   cursor: pointer;
   display: flex;
@@ -53,7 +53,7 @@
 }
 
 .unitHeader:hover,
-.pGreatSubtopicHeader:hover {
+.kaiSubtopicHeader:hover {
   background-color: #f5f5f5;
 }
 
@@ -62,7 +62,7 @@
   color: #333;
 }
 
-.pGreatSubtopicHeader {
+.kaiSubtopicHeader {
   padding-left: 25px;
   font-weight: 500;
   color: #555;
@@ -90,7 +90,7 @@
   display: inline-block;
 }
 
-.pGreatSubtopics,
+.kaiSubtopics,
 .kaiLevels {
   margin-left: 5px;
 }

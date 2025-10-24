@@ -8,7 +8,7 @@ import {
 } from "firebase/firestore";
 
 /**
- * Fetches all problems from Firestore and organizes them by unit > pGreatSubtopic > kaiLevel
+ * Fetches all problems from Firestore and organizes them by unit > kaiSubtopic > kaiLevel
  * @returns {Promise<Object>} Organized problems structure
  */
 export async function fetchProblemsStructure() {
@@ -19,19 +19,19 @@ export async function fetchProblemsStructure() {
 
     problemsSnapshot.forEach((doc) => {
       const data = doc.data();
-      const { unit, pGreatSubtopic, kaiLevel } = data;
+      const { unit, kaiSubtopic, kaiLevel } = data;
 
       if (!problems[unit]) {
         problems[unit] = {};
       }
-      if (!problems[unit][pGreatSubtopic]) {
-        problems[unit][pGreatSubtopic] = {};
+      if (!problems[unit][kaiSubtopic]) {
+        problems[unit][kaiSubtopic] = {};
       }
-      if (!problems[unit][pGreatSubtopic][kaiLevel]) {
-        problems[unit][pGreatSubtopic][kaiLevel] = [];
+      if (!problems[unit][kaiSubtopic][kaiLevel]) {
+        problems[unit][kaiSubtopic][kaiLevel] = [];
       }
 
-      problems[unit][pGreatSubtopic][kaiLevel].push({
+      problems[unit][kaiSubtopic][kaiLevel].push({
         id: doc.id,
         ...data,
       });

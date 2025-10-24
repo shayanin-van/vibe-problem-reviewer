@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 
 function Menu({ isShowed, setIsShowed, problemsStructure, onProblemSelect }) {
   const [expandedUnits, setExpandedUnits] = useState({});
-  const [expandedPGreatSubtopics, setExpandedPGreatSubtopics] = useState({});
+  const [expandedKaiSubtopics, setExpandedKaiSubtopics] = useState({});
   const [expandedKaiLevels, setExpandedKaiLevels] = useState({});
   const menuRef = useRef(null);
 
@@ -14,16 +14,16 @@ function Menu({ isShowed, setIsShowed, problemsStructure, onProblemSelect }) {
     }));
   };
 
-  const togglePGreatSubtopic = (unit, pGreatSubtopic) => {
-    const key = `${unit}-${pGreatSubtopic}`;
-    setExpandedPGreatSubtopics((prev) => ({
+  const toggleKaiSubtopic = (unit, kaiSubtopic) => {
+    const key = `${unit}-${kaiSubtopic}`;
+    setExpandedKaiSubtopics((prev) => ({
       ...prev,
       [key]: !prev[key],
     }));
   };
 
-  const toggleKaiLevel = (unit, pGreatSubtopic, kaiLevel) => {
-    const key = `${unit}-${pGreatSubtopic}-${kaiLevel}`;
+  const toggleKaiLevel = (unit, kaiSubtopic, kaiLevel) => {
+    const key = `${unit}-${kaiSubtopic}-${kaiLevel}`;
     setExpandedKaiLevels((prev) => ({
       ...prev,
       [key]: !prev[key],
@@ -73,34 +73,30 @@ function Menu({ isShowed, setIsShowed, problemsStructure, onProblemSelect }) {
             </div>
 
             {expandedUnits[unit] && (
-              <div className={styles.pGreatSubtopics}>
-                {Object.keys(problemsStructure[unit]).map((pGreatSubtopic) => {
-                  const pGreatSubtopicKey = `${unit}-${pGreatSubtopic}`;
+              <div className={styles.kaiSubtopics}>
+                {Object.keys(problemsStructure[unit]).map((kaiSubtopic) => {
+                  const kaiSubtopicKey = `${unit}-${kaiSubtopic}`;
                   return (
                     <div
-                      key={pGreatSubtopic}
-                      className={styles.pGreatSubtopicSection}
+                      key={kaiSubtopic}
+                      className={styles.kaiSubtopicSection}
                     >
                       <div
-                        className={styles.pGreatSubtopicHeader}
-                        onClick={() =>
-                          togglePGreatSubtopic(unit, pGreatSubtopic)
-                        }
+                        className={styles.kaiSubtopicHeader}
+                        onClick={() => toggleKaiSubtopic(unit, kaiSubtopic)}
                       >
                         <span className={styles.arrow}>
-                          {expandedPGreatSubtopics[pGreatSubtopicKey]
-                            ? "▼"
-                            : "▶"}
+                          {expandedKaiSubtopics[kaiSubtopicKey] ? "▼" : "▶"}
                         </span>
-                        <span>{pGreatSubtopic}</span>
+                        <span>{kaiSubtopic}</span>
                       </div>
 
-                      {expandedPGreatSubtopics[pGreatSubtopicKey] && (
+                      {expandedKaiSubtopics[kaiSubtopicKey] && (
                         <div className={styles.kaiLevels}>
                           {Object.keys(
-                            problemsStructure[unit][pGreatSubtopic]
+                            problemsStructure[unit][kaiSubtopic]
                           ).map((kaiLevel) => {
-                            const kaiLevelKey = `${unit}-${pGreatSubtopic}-${kaiLevel}`;
+                            const kaiLevelKey = `${unit}-${kaiSubtopic}-${kaiLevel}`;
                             return (
                               <div
                                 key={kaiLevel}
@@ -109,11 +105,7 @@ function Menu({ isShowed, setIsShowed, problemsStructure, onProblemSelect }) {
                                 <div
                                   className={styles.kaiLevelHeader}
                                   onClick={() =>
-                                    toggleKaiLevel(
-                                      unit,
-                                      pGreatSubtopic,
-                                      kaiLevel
-                                    )
+                                    toggleKaiLevel(unit, kaiSubtopic, kaiLevel)
                                   }
                                 >
                                   <span className={styles.arrow}>
@@ -123,7 +115,7 @@ function Menu({ isShowed, setIsShowed, problemsStructure, onProblemSelect }) {
                                 </div>
                                 {expandedKaiLevels[kaiLevelKey] && (
                                   <div className={styles.problems}>
-                                    {problemsStructure[unit][pGreatSubtopic][
+                                    {problemsStructure[unit][kaiSubtopic][
                                       kaiLevel
                                     ].map((problem) => {
                                       const questionPreview = problem.question
