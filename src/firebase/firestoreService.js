@@ -8,7 +8,7 @@ import {
 } from "firebase/firestore";
 
 /**
- * Fetches all problems from Firestore and organizes them by unit > kaiSubtopic > kaiLevel
+ * Fetches all problems from Firestore and organizes them by unit > kaiSubtopic > kaiLevel > template
  * @returns {Promise<Object>} Organized problems structure
  */
 export async function fetchProblemsStructure() {
@@ -19,7 +19,7 @@ export async function fetchProblemsStructure() {
 
     problemsSnapshot.forEach((doc) => {
       const data = doc.data();
-      const { unit, kaiSubtopic, kaiLevel } = data;
+      const { unit, kaiSubtopic, kaiLevel, template } = data;
 
       if (!problems[unit]) {
         problems[unit] = {};
@@ -30,8 +30,11 @@ export async function fetchProblemsStructure() {
       if (!problems[unit][kaiSubtopic][kaiLevel]) {
         problems[unit][kaiSubtopic][kaiLevel] = [];
       }
+      if (!problems[unit][kaiSubtopic][kaiLevel][template]) {
+        problems[unit][kaiSubtopic][kaiLevel][template] = [];
+      }
 
-      problems[unit][kaiSubtopic][kaiLevel].push({
+      problems[unit][kaiSubtopic][kaiLevel][template].push({
         id: doc.id,
         ...data,
       });
