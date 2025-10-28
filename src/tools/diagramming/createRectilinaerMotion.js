@@ -59,7 +59,6 @@ export function createRectilinearMotion(parentDiv, parameters) {
 
   // create and append slider div element
   const sliderDiv = document.createElement("div");
-  //sliderDiv.style.width = "100%";
   parentDiv.appendChild(sliderDiv);
 
   // define the 'draw' function
@@ -70,33 +69,33 @@ export function createRectilinearMotion(parentDiv, parameters) {
   // create the interactive object
   let int = new dg.Interactive(sliderDiv, svg);
 
-  //   // draw the diagram
-  //   let bg;
-  //   if (direction == "horizontal") {
-  //     bg = dg.rectangle(sRange, sRange / aspectRatio);
-  //   } else {
-  //     bg = dg.rectangle(sRange * aspectRatio, sRange);
-  //   }
-
-  //   int.draw_function = (inp) => {
-  //     let t = inp["t"];
-
-  //     draw(bg);
-  //   };
-
-  //   int.slider("t", 0, t, 0, t / 60, t * 1000);
-  //   int.draw();
+  // draw the diagram
+  let bg;
+  if (direction == "horizontal") {
+    bg = dg.rectangle(sRange, sRange / aspectRatio);
+  } else {
+    bg = dg.rectangle(sRange * aspectRatio, sRange);
+  }
 
   int.draw_function = (inp) => {
-    let x = inp["x"];
-    let big_sq = dg.square(10).fill();
-    let small_sq = dg.square(2).fill("red").translate(dg.V2(x, 0));
+    let t = inp["t"];
 
-    draw(big_sq, small_sq);
+    draw(bg);
   };
 
-  int.slider("x", -10, 10, 0);
+  int.slider("t", 0, t, 0);
   int.draw();
+
+  // int.draw_function = (inp) => {
+  //   let x = inp["x"];
+  //   let big_sq = dg.square(10).fill();
+  //   let small_sq = dg.square(2).fill("red").translate(dg.V2(x, 0));
+
+  //   draw(big_sq, small_sq);
+  // };
+
+  // int.slider("x", -10, 10, 0);
+  // int.draw();
 
   dg.handle_tex_in_svg(svg, handletex);
 }
