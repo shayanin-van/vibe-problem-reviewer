@@ -77,25 +77,26 @@ export function createRectilinearMotion(parentDiv, parameters) {
     bg = dg.rectangle(sRange * aspectRatio, sRange);
   }
 
+  let object = dg
+    .circle(0.025 * sRange)
+    .fill("lightblue")
+    .stroke("white")
+    .strokewidth(3);
+
   int.draw_function = (inp) => {
     let t = inp["t"];
 
-    draw(bg);
+    if (direction == "horizontal") {
+      object = object.position(dg.V2(u * t + 0.5 * a * t * t, 0));
+    } else {
+      object = object.position(dg.V2(0, u * t + 0.5 * a * t * t));
+    }
+
+    draw(bg, object);
   };
 
   int.slider("t", 0, t, 0);
   int.draw();
-
-  // int.draw_function = (inp) => {
-  //   let x = inp["x"];
-  //   let big_sq = dg.square(10).fill();
-  //   let small_sq = dg.square(2).fill("red").translate(dg.V2(x, 0));
-
-  //   draw(big_sq, small_sq);
-  // };
-
-  // int.slider("x", -10, 10, 0);
-  // int.draw();
 
   dg.handle_tex_in_svg(svg, handletex);
 }
