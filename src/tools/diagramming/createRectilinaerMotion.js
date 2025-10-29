@@ -28,11 +28,11 @@ export function createRectilinearMotion(parentDiv, parameters) {
     sMaxNeg = s;
   }
   const tCrit = -u / a; // t when velocity = 0
-  if (tCrit < t) {
+  if (tCrit > 0 && tCrit < t) {
     const sAtCrit = u * tCrit + 0.5 * a * tCrit;
-    if (sAtCrit >= 0) {
+    if (sAtCrit >= 0 && sAtCrit > sMaxPos) {
       sMaxPos = sAtCrit;
-    } else {
+    } else if (sAtCrit < 0 && sAtCrit < sMaxNeg) {
       sMaxNeg = sAtCrit;
     }
   }
@@ -72,27 +72,70 @@ export function createRectilinearMotion(parentDiv, parameters) {
   // draw the diagram
   let bg;
   if (direction == "horizontal") {
-    bg = dg.rectangle(sRange, sRange / aspectRatio);
+    bg = dg
+      .rectangle(sRange, sRange / aspectRatio)
+      .position(dg.V2((sMaxNeg + sMaxPos) / 2, 0));
   } else {
-    bg = dg.rectangle(sRange * aspectRatio, sRange);
+    bg = dg
+      .rectangle(sRange * aspectRatio, sRange)
+      .position(dg.V2(0, (sMaxNeg + sMaxPos) / 2));
   }
+  bg = bg.scale(dg.V2(1.1, 1.1));
 
   let object = dg
-    .circle(0.025 * sRange)
+    .circle(0.04 * sRange)
     .fill("lightblue")
     .stroke("white")
     .strokewidth(3);
+
+  let label = dg
+    .text(objectLabel)
+    .fontfamily("mitr, sans-serif")
+    .fontsize(20)
+    .textstroke("white")
+    .textstrokewidth(1);
+
+  let aVect;
+  if (direction == "horizontal") {
+    aVect = dg.annotation
+      .vector(
+        dg.V2((0.2 * sRange * a) / Math.abs(a), 0),
+        "a = " + a + " m/s²",
+        dg.V2(-(0.1 * sRange * a) / Math.abs(a), 0.04 * sRange)
+      )
+      .fill("blue")
+      .stroke("blue")
+      .position(bg.origin)
+      .translate(dg.V2(-(0.1 * sRange * a) / Math.abs(a), 0.06 * sRange));
+  } else {
+    aVect = dg.annotation
+      .vector(
+        dg.V2(0, (0.2 * sRange * a) / Math.abs(a)),
+        "a = " + a + " m/s²",
+        dg.V2(0.12 * sRange, -(0.1 * sRange * a) / Math.abs(a)),
+        0.02 * sRange
+      )
+      .fill("blue")
+      .stroke("blue")
+      .position(bg.origin)
+      .translate(dg.V2(0.14 * sRange, -(0.1 * sRange * a) / Math.abs(a)));
+  }
+  if (showAccel == false) {
+    aVect = aVect.opacity(0);
+  }
 
   int.draw_function = (inp) => {
     let t = inp["t"];
 
     if (direction == "horizontal") {
-      object = object.position(dg.V2(u * t + 0.5 * a * t * t, 0));
+      object = object.position(dg.V2(u * t + 0.5 * a * t * t, -0.03 * sRange));
+      label = label.position(dg.V2(u * t + 0.5 * a * t * t, -0.03 * sRange));
     } else {
       object = object.position(dg.V2(0, u * t + 0.5 * a * t * t));
+      label = label.position(dg.V2(0, u * t + 0.5 * a * t * t));
     }
 
-    draw(bg, object);
+    draw(bg, object, label, aVect);
   };
 
   int.slider("t", 0, t, 0);
