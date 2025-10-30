@@ -27,15 +27,18 @@ export function createRectilinearMotion(parentDiv, parameters) {
   } else {
     sMaxNeg = s;
   }
-  const tCrit = -u / a; // t when velocity = 0
-  if (tCrit > 0 && tCrit < t) {
-    const sAtCrit = u * tCrit + 0.5 * a * tCrit;
-    if (sAtCrit >= 0 && sAtCrit > sMaxPos) {
-      sMaxPos = sAtCrit;
-    } else if (sAtCrit < 0 && sAtCrit < sMaxNeg) {
-      sMaxNeg = sAtCrit;
+  if (a != 0) {
+    const tCrit = -u / a; // t when velocity = 0
+    if (tCrit > 0 && tCrit < t) {
+      const sAtCrit = u * tCrit + 0.5 * a * tCrit * tCrit;
+      if (sAtCrit >= 0 && sAtCrit > sMaxPos) {
+        sMaxPos = sAtCrit;
+      } else if (sAtCrit < 0 && sAtCrit < sMaxNeg) {
+        sMaxNeg = sAtCrit;
+      }
     }
   }
+
   const sRange = sMaxPos - sMaxNeg;
 
   // find aspect ratio
@@ -80,7 +83,7 @@ export function createRectilinearMotion(parentDiv, parameters) {
       .rectangle(sRange * aspectRatio, sRange)
       .position(dg.V2(0, (sMaxNeg + sMaxPos) / 2));
   }
-  bg = bg.scale(dg.V2(1.1, 1.1));
+  bg = bg.scale(dg.V2(1.2, 1.2)).strokewidth(0);
 
   let object = dg
     .circle(0.04 * sRange)
@@ -91,54 +94,113 @@ export function createRectilinearMotion(parentDiv, parameters) {
   let label = dg
     .text(objectLabel)
     .fontfamily("mitr, sans-serif")
-    .fontsize(20)
+    .fontsize(16)
     .textstroke("white")
-    .textstrokewidth(1);
+    .textstrokewidth(0.4);
 
   let aVect;
   if (direction == "horizontal") {
     aVect = dg.annotation
       .vector(
-        dg.V2((0.2 * sRange * a) / Math.abs(a), 0),
+        dg.V2(0.2 * sRange * Math.sign(a), 0),
         "a = " + a + " m/s²",
-        dg.V2(-(0.1 * sRange * a) / Math.abs(a), 0.04 * sRange)
+        dg.V2(-(0.1 * sRange * Math.sign(a)), 0.04 * sRange),
+        0.02 * sRange
       )
-      .fill("blue")
-      .stroke("blue")
+      .fill("red")
+      .stroke("red")
       .position(bg.origin)
-      .translate(dg.V2(-(0.1 * sRange * a) / Math.abs(a), 0.06 * sRange));
+      .translate(dg.V2(-(0.1 * sRange * Math.sign(a)), 0.06 * sRange));
   } else {
     aVect = dg.annotation
       .vector(
-        dg.V2(0, (0.2 * sRange * a) / Math.abs(a)),
+        dg.V2(0, 0.2 * sRange * Math.sign(a)),
         "a = " + a + " m/s²",
-        dg.V2(0.12 * sRange, -(0.1 * sRange * a) / Math.abs(a)),
+        dg.V2(0.12 * sRange, -(0.1 * sRange * Math.sign(a))),
         0.02 * sRange
       )
-      .fill("blue")
-      .stroke("blue")
+      .fill("red")
+      .stroke("red")
       .position(bg.origin)
-      .translate(dg.V2(0.14 * sRange, -(0.1 * sRange * a) / Math.abs(a)));
+      .translate(dg.V2(0.14 * sRange, -(0.1 * sRange * Math.sign(a))));
   }
-  if (showAccel == false) {
+  if (showAccel == false || a == 0) {
     aVect = aVect.opacity(0);
   }
+
+  let vVect;
+  let sVect;
 
   int.draw_function = (inp) => {
     let t = inp["t"];
 
+    let currentPos = u * t + 0.5 * a * t * t;
+    let currentVel = u + a * t;
+    let velScaleFactor = 0.01 * sRange;
+
     if (direction == "horizontal") {
-      object = object.position(dg.V2(u * t + 0.5 * a * t * t, -0.03 * sRange));
-      label = label.position(dg.V2(u * t + 0.5 * a * t * t, -0.03 * sRange));
+      object = object.position(dg.V2(currentPos, -0.03 * sRange));
+      label = label.position(dg.V2(currentPos, -0.03 * sRange));
     } else {
-      object = object.position(dg.V2(0, u * t + 0.5 * a * t * t));
-      label = label.position(dg.V2(0, u * t + 0.5 * a * t * t));
+      object = object.position(dg.V2(0, currentPos));
+      label = label.position(dg.V2(0, currentPos));
     }
 
-    draw(bg, object, label, aVect);
+    if (direction == "horizontal") {
+      vVect = dg.annotation
+        .vector(
+          dg.V2(velScaleFactor * currentVel, 0),
+          currentVel.toFixed(1) + " m/s",
+          dg.V2(-((velScaleFactor / 2) * currentVel), 0.04 * sRange),
+          0.02 * sRange
+        )
+        .fill("blue")
+        .stroke("blue")
+        .position(object.origin);
+    } else {
+      vVect = dg.annotation
+        .vector(
+          dg.V2(0, velScaleFactor * currentVel),
+          currentVel.toFixed(1) + " m/s",
+          dg.V2(0.12 * sRange, -((velScaleFactor / 2) * currentVel)),
+          0.02 * sRange
+        )
+        .fill("blue")
+        .stroke("blue")
+        .position(object.origin);
+    }
+    if (showVelo == false) {
+      vVect = vVect.opacity(0);
+    }
+
+    if (direction == "horizontal") {
+      sVect = dg.annotation.length(
+        dg.V2(0, -0.03 * sRange),
+        object.origin,
+        "s = " + currentPos.toFixed(1) + " m",
+        0.06 * sRange * Math.sign(currentPos),
+        0.03 * sRange,
+        0.1 * sRange * Math.sign(currentPos)
+      );
+    } else {
+      sVect = dg.annotation.length(
+        dg.V2(0, 0),
+        object.origin,
+        "s = " + currentPos.toFixed(1) + " m",
+        -0.1 * sRange * Math.sign(currentPos),
+        0.03 * sRange,
+        -0.2 * sRange * Math.sign(currentPos)
+      );
+    }
+
+    if (showDist == false || currentPos == 0) {
+      sVect = sVect.opacity(0);
+    }
+
+    draw(bg, object, label, aVect, vVect, sVect);
   };
 
-  int.slider("t", 0, t, 0);
+  int.slider("t", 0, t, 0, t / 1000, t);
   int.draw();
 
   dg.handle_tex_in_svg(svg, handletex);
