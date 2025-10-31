@@ -25,7 +25,7 @@ export function createMotionPath(parentDiv, parameters) {
     xRange = yRange;
   }
   if (yRange == 0 && xRange != 0) {
-    yRange = xRange;
+    yRange = 0.2 * xRange;
   }
   if (xRange == 0 && yRange == 0) {
     xRange = 10;
