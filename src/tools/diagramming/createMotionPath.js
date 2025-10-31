@@ -121,6 +121,8 @@ export function createMotionPath(parentDiv, parameters) {
     }
   }
 
+  // for some reason, calling draw() twice fix some initial sizing problem
+  draw(path, ...nodes, ...lengths, displacement, ...labels);
   draw(path, ...nodes, ...lengths, displacement, ...labels);
 
   dg.handle_tex_in_svg(svg, handletex);
