@@ -15,9 +15,62 @@ export function createPolynomialGraph(parentDiv, parameters) {
   };
 
   // size calculation
+  let xMin = graphSections[0].domain.xStart;
+  let xMax = graphSections[graphSections.length - 1].domain.xEnd;
+  let yMin =
+    graphSections[0].a * xMin * xMin +
+    graphSections[0].b * xMin +
+    graphSections[0].c;
+  let yMax =
+    graphSections[graphSections.length - 1].a * xMax * xMax +
+    graphSections[graphSections.length - 1].b * xMax +
+    graphSections[graphSections.length - 1].c;
+  for (let i = 0; i < graphSections.length; i++) {
+    let xStart = graphSections[i].domain.xStart;
+    let xEnd = graphSections[i].domain.xEnd;
+    if (xStart < xMin) {
+      xMin = xStart;
+    }
+    if (xEnd > xMax) {
+      xMax = xEnd;
+    }
+    let yAtXStart =
+      graphSections[i].a * xStart * xStart +
+      graphSections[i].b * xStart +
+      graphSections[i].c;
+    let yAtXEnd =
+      graphSections[i].a * xEnd * xEnd +
+      graphSections[i].b * xEnd +
+      graphSections[i].c;
+    if (yAtXStart < yMin) {
+      yMin = yAtXStart;
+    }
+    if (yAtXEnd < yMin) {
+      yMin = yAtXEnd;
+    }
+    if (yAtXStart > yMax) {
+      yMax = yAtXStart;
+    }
+    if (yAtXEnd > yMax) {
+      yMax = yAtXEnd;
+    }
+    let xCrit = -graphSections[i].b / (2 * graphSections[i].a);
+    if (xStart < xCrit && xCrit < xEnd) {
+      let yAtXCrit =
+        graphSections[i].a * xCrit * xCrit +
+        graphSections[i].b * xCrit +
+        graphSections[i].c;
+      if (yAtXCrit < yMin) {
+        yMin = yAtXCrit;
+      }
+      if (yAtXCrit > yMax) {
+        yMax = yAtXCrit;
+      }
+    }
+  }
 
   // find aspect ratio
-  const aspectRatio = 1;
+  const aspectRatio = 1.6;
 
   // clear and reset parentDiv
   parentDiv.innerHTML = "";
@@ -37,25 +90,37 @@ export function createPolynomialGraph(parentDiv, parameters) {
 
   // draw the diagram
   let axisOpt = {
-    xrange: [-50, 50],
-    yrange: [-50, 50],
+    xrange: [xMin, xMax],
+    yrange: [yMin, yMax],
+    bbox: [dg.V2(-8, -5), dg.V2(8, 5)],
+    headsize: 0,
+    ticksize: 0.4,
+    n_sample: 500,
   };
-  let axis = dg.axes_empty(axisOpt);
-  let graphs = [];
-  for (let i = 0; i < graphSections.length; i++) {
-    let fn = (x) =>
-      graphSections[i].a * x * x + graphSections[i].b * x + graphSections[i].c;
-    let graph = dg.plotf(fn, {
-      xrange: [graphSections[i].domain.xStart, graphSections[i].domain.xEnd],
-      yrange: [-50, 50],
-    });
 
-    graphs.push(graph);
-  }
+  let axis = dg.axes_empty(axisOpt);
+
+  let fn = (x) => {
+    for (let i = 0; i < graphSections.length; i++) {
+      if (
+        x < graphSections[i].domain.xStart ||
+        x > graphSections[i].domain.xEnd
+      ) {
+        continue;
+      } else {
+        return (
+          graphSections[i].a * x * x +
+          graphSections[i].b * x +
+          graphSections[i].c
+        );
+      }
+    }
+  };
+  let graph = dg.plotf(fn, axisOpt);
 
   // for some reason, calling draw() twice fix some initial sizing problem
-  draw(axis, ...graphs);
-  draw(axis, ...graphs);
+  draw(axis, graph);
+  draw(axis, graph);
 
   dg.handle_tex_in_svg(svg, handletex);
 }
