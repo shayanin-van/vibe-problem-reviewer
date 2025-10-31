@@ -14,6 +14,9 @@ export function createRectilinearMotion(parentDiv, parameters) {
   const showVelo = parameters.showVelo;
   const showDist = parameters.showDist;
 
+  // recalculate s from u, a and t. so the diagram only depend on these 3 variables preventing conflict
+  const finalDist = u * t + 0.5 * a * t * t;
+
   // handle MathJax
   let handletex = (str, conf) => {
     return MathJax.tex2svg(str, conf).innerHTML;
@@ -22,10 +25,10 @@ export function createRectilinearMotion(parentDiv, parameters) {
   // size calculation
   let sMaxPos = 0;
   let sMaxNeg = 0;
-  if (s >= 0) {
-    sMaxPos = s;
+  if (finalDist >= 0) {
+    sMaxPos = finalDist;
   } else {
-    sMaxNeg = s;
+    sMaxNeg = finalDist;
   }
   if (a != 0) {
     const tCrit = -u / a; // t when velocity = 0
@@ -89,12 +92,12 @@ export function createRectilinearMotion(parentDiv, parameters) {
   if (direction == "horizontal") {
     bgExt = dg
       .rectangle(0.4 * sRange, sRange / aspectRatio)
-      .position(dg.V2(s, 0))
+      .position(dg.V2(finalDist, 0))
       .strokewidth(0);
   } else {
     bgExt = dg
       .rectangle(sRange * aspectRatio, 0.4 * sRange)
-      .position(dg.V2(0, s))
+      .position(dg.V2(0, finalDist))
       .strokewidth(0);
   }
 
@@ -145,11 +148,12 @@ export function createRectilinearMotion(parentDiv, parameters) {
   let sVect;
 
   int.draw_function = (inp) => {
-    let t = inp["t"];
+    let time = inp["t"];
 
-    let currentPos = u * t + 0.5 * a * t * t;
-    let currentVel = u + a * t;
-    let velScaleFactor = (0.2 * sRange) / Math.abs(v);
+    let currentPos = u * time + 0.5 * a * time * time;
+    let currentVel = u + a * time;
+    let velScaleFactor =
+      (0.2 * sRange) / Math.max(Math.abs(u + a * t), Math.abs(u));
 
     if (direction == "horizontal") {
       object = object.position(dg.V2(currentPos, -0.03 * sRange));
