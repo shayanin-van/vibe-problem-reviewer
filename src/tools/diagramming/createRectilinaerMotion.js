@@ -3,9 +3,7 @@ import { formatLatexEquation } from "../utils/formatLatexEquation";
 
 export function createRectilinearMotion(parentDiv, parameters) {
   // initialize parameters
-  const s = parameters.s;
   const u = parameters.u;
-  const v = parameters.v;
   const a = parameters.a;
   const t = parameters.t;
   const direction = parameters.direction;
@@ -14,7 +12,7 @@ export function createRectilinearMotion(parentDiv, parameters) {
   const showVelo = parameters.showVelo;
   const showDist = parameters.showDist;
 
-  // recalculate s from u, a and t. so the diagram only depend on these 3 variables preventing conflict
+  // calculate s from u, a and t.
   const finalDist = u * t + 0.5 * a * t * t;
 
   // handle MathJax
