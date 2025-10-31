@@ -83,7 +83,20 @@ export function createRectilinearMotion(parentDiv, parameters) {
       .rectangle(sRange * aspectRatio, sRange)
       .position(dg.V2(0, (sMaxNeg + sMaxPos) / 2));
   }
-  bg = bg.scale(dg.V2(1.2, 1.2)).strokewidth(0);
+  bg = bg.scale(dg.V2(1.14, 1.14)).strokewidth(0);
+  // extended bg for velo vector placeholder
+  let bgExt;
+  if (direction == "horizontal") {
+    bgExt = dg
+      .rectangle(0.4 * sRange, sRange / aspectRatio)
+      .position(dg.V2(s, 0))
+      .strokewidth(0);
+  } else {
+    bgExt = dg
+      .rectangle(sRange * aspectRatio, 0.4 * sRange)
+      .position(dg.V2(0, s))
+      .strokewidth(0);
+  }
 
   let object = dg
     .circle(0.04 * sRange)
@@ -103,7 +116,7 @@ export function createRectilinearMotion(parentDiv, parameters) {
     aVect = dg.annotation
       .vector(
         dg.V2(0.2 * sRange * Math.sign(a), 0),
-        "a = " + a + " m/s²",
+        "a = " + a.toFixed(1) + " m/s²",
         dg.V2(-(0.1 * sRange * Math.sign(a)), 0.04 * sRange),
         0.02 * sRange
       )
@@ -115,7 +128,7 @@ export function createRectilinearMotion(parentDiv, parameters) {
     aVect = dg.annotation
       .vector(
         dg.V2(0, 0.2 * sRange * Math.sign(a)),
-        "a = " + a + " m/s²",
+        "a = " + a.toFixed(1) + " m/s²",
         dg.V2(0.12 * sRange, -(0.1 * sRange * Math.sign(a))),
         0.02 * sRange
       )
@@ -136,7 +149,7 @@ export function createRectilinearMotion(parentDiv, parameters) {
 
     let currentPos = u * t + 0.5 * a * t * t;
     let currentVel = u + a * t;
-    let velScaleFactor = 0.01 * sRange;
+    let velScaleFactor = (0.2 * sRange) / Math.abs(v);
 
     if (direction == "horizontal") {
       object = object.position(dg.V2(currentPos, -0.03 * sRange));
@@ -197,10 +210,16 @@ export function createRectilinearMotion(parentDiv, parameters) {
       sVect = sVect.opacity(0);
     }
 
-    draw(bg, object, label, aVect, vVect, sVect);
+    draw(bg, bgExt, object, label, aVect, vVect, sVect);
   };
 
-  int.slider("t", 0, t, 0, t / 1000, t);
+  int.slider("t", 0, t, 0, t / 1000, t, (name, value) => {
+    return (
+      dg.str_to_mathematical_italic(name) + " = " + value.toFixed(1) + " s"
+    );
+  });
+  // for some reason, calling draw() twice fix some initial sizing problem
+  int.draw();
   int.draw();
 
   dg.handle_tex_in_svg(svg, handletex);
