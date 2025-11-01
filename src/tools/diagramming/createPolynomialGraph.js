@@ -70,7 +70,7 @@ export function createPolynomialGraph(parentDiv, parameters) {
   }
 
   // find aspect ratio
-  const aspectRatio = 1.6;
+  const aspectRatio = 2;
 
   // clear and reset parentDiv
   parentDiv.innerHTML = "";
@@ -92,13 +92,24 @@ export function createPolynomialGraph(parentDiv, parameters) {
   let axisOpt = {
     xrange: [xMin, xMax],
     yrange: [yMin, yMax],
-    bbox: [dg.V2(-8, -5), dg.V2(8, 5)],
+    bbox: [dg.V2(-5 * aspectRatio, -5), dg.V2(5 * aspectRatio, 5)],
     headsize: 0,
     ticksize: 0.4,
     n_sample: 500,
   };
+  let transf = dg.axes_transform(axisOpt);
 
-  let axis = dg.axes_empty(axisOpt);
+  let mainAxis = dg.axes_empty(axisOpt);
+  let axisExtenderX = dg
+    .curve([dg.V2(0, 0), dg.V2(0.8, 0)])
+    .position(transf(dg.V2(xMax, 0)));
+  let axisExtenderY = dg
+    .curve([dg.V2(0, 0), dg.V2(0, 0.8)])
+    .position(transf(dg.V2(0, yMax)));
+  let axis = dg
+    .diagram_combine(mainAxis, axisExtenderX, axisExtenderY)
+    .stroke("black")
+    .strokewidth(1.5);
 
   let fn = (x) => {
     for (let i = 0; i < graphSections.length; i++) {
@@ -116,11 +127,44 @@ export function createPolynomialGraph(parentDiv, parameters) {
       }
     }
   };
-  let graph = dg.plotf(fn, axisOpt);
+  let graph = dg.plotf(fn, axisOpt).stroke("blue").strokewidth(3);
+
+  let xLabelDiagram = dg
+    .text(xLabel)
+    .position(transf(dg.V2(xMax, 0)))
+    .fontfamily("mitr, sans-serif")
+    .move_origin_text("center-left")
+    .translate(dg.V2(0.4 + 0.8, 0));
+  let yLabelDiagram = dg
+    .text(yLabel)
+    .position(transf(dg.V2(0, yMax)))
+    .fontfamily("mitr, sans-serif")
+    .move_origin_text("bottom-center")
+    .translate(dg.V2(0, 0.4 / aspectRatio + 0.8));
+  let axisLabel = dg.diagram_combine(xLabelDiagram, yLabelDiagram);
+
+  let tickMarks = [];
+  for (let i = 0; i < graphSections.length; i++) {
+    let xStart = graphSections[i].domain.xStart;
+    let xEnd = graphSections[i].domain.xEnd;
+    tickMarks.push(dg.xtickmark(xStart, 0, xStart.toString(), axisOpt));
+    tickMarks.push(dg.xtickmark(xEnd, 0, xEnd.toString(), axisOpt));
+
+    let yAtXStart =
+      graphSections[i].a * xStart * xStart +
+      graphSections[i].b * xStart +
+      graphSections[i].c;
+    let yAtXEnd =
+      graphSections[i].a * xEnd * xEnd +
+      graphSections[i].b * xEnd +
+      graphSections[i].c;
+    tickMarks.push(dg.ytickmark(yAtXStart, 0, yAtXStart.toString(), axisOpt));
+    tickMarks.push(dg.ytickmark(yAtXEnd, 0, yAtXEnd.toString(), axisOpt));
+  }
 
   // for some reason, calling draw() twice fix some initial sizing problem
-  draw(axis, graph);
-  draw(axis, graph);
+  draw(axis, graph, axisLabel, ...tickMarks);
+  draw(axis, graph, axisLabel, ...tickMarks);
 
   dg.handle_tex_in_svg(svg, handletex);
 }
