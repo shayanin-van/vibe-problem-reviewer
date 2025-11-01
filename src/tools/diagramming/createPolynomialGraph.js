@@ -111,6 +111,7 @@ export function createPolynomialGraph(parentDiv, parameters) {
     .stroke("black")
     .strokewidth(1.5);
 
+  // define function and it derivative
   let fn = (x) => {
     for (let i = 0; i < graphSections.length; i++) {
       if (
@@ -127,6 +128,19 @@ export function createPolynomialGraph(parentDiv, parameters) {
       }
     }
   };
+  let dFn = (x) => {
+    for (let i = 0; i < graphSections.length; i++) {
+      if (
+        x < graphSections[i].domain.xStart ||
+        x > graphSections[i].domain.xEnd
+      ) {
+        continue;
+      } else {
+        return 2 * graphSections[i].a * x + graphSections[i].b;
+      }
+    }
+  };
+
   let graph = dg.plotf(fn, axisOpt).stroke("blue").strokewidth(3);
 
   let xLabelDiagram = dg
@@ -162,9 +176,92 @@ export function createPolynomialGraph(parentDiv, parameters) {
     tickMarks.push(dg.ytickmark(yAtXEnd, 0, yAtXEnd.toString(), axisOpt));
   }
 
+  let areaUnder = dg.curve([]);
+  let areaMark = [];
+  if (intervalsToShowArea) {
+    areaUnder = dg
+      .under_curvef(
+        fn,
+        intervalsToShowArea.xStart,
+        intervalsToShowArea.xEnd,
+        axisOpt
+      )
+      .fill("lightblue")
+      .opacity(0.5)
+      .stroke("none");
+
+    areaMark.push(
+      dg.xtickmark(
+        intervalsToShowArea.xStart,
+        0,
+        intervalsToShowArea.xStart.toString(),
+        axisOpt
+      )
+    );
+    areaMark.push(
+      dg.xtickmark(
+        intervalsToShowArea.xEnd,
+        0,
+        intervalsToShowArea.xEnd.toString(),
+        axisOpt
+      )
+    );
+    let yAtXStart = fn(intervalsToShowArea.xStart);
+    let yAtXEnd = fn(intervalsToShowArea.xEnd);
+    areaMark.push(dg.ytickmark(yAtXStart, 0, yAtXStart.toString(), axisOpt));
+    areaMark.push(dg.ytickmark(yAtXEnd, 0, yAtXEnd.toString(), axisOpt));
+  }
+
+  let slopes = [];
+  if (pointsToShowSlope) {
+    for (let i = 0; i < pointsToShowSlope.length; i++) {
+      let slopeDot = dg
+        .circle(0.2)
+        .fill("lightred")
+        .strokewidth(0)
+        .position(
+          transf(dg.V2(pointsToShowSlope[i], fn(pointsToShowSlope[i])))
+        );
+      let angle = Math.atan(dFn(pointsToShowSlope[i]));
+      let lineStart = transf(
+        dg.V2(
+          pointsToShowSlope[i] - Math.cos(angle),
+          fn(pointsToShowSlope[i]) - Math.sin(angle)
+        )
+      );
+      let lineEnd = transf(
+        dg.V2(
+          pointsToShowSlope[i] + Math.cos(angle),
+          fn(pointsToShowSlope[i]) + Math.sin(angle)
+        )
+      );
+      let tranfV2 = lineEnd.sub(lineStart);
+      let tranfAngle = Math.atan2(tranfV2.y, tranfV2.x);
+      let slopeLine = dg
+        .curve([dg.V2(-1, 0), dg.V2(1, 0)])
+        .rotate(tranfAngle)
+        .strokewidth(3.5)
+        .stroke("red")
+        .position(
+          transf(dg.V2(pointsToShowSlope[i], fn(pointsToShowSlope[i])))
+        );
+      let slope = dg.diagram_combine(slopeLine, slopeDot);
+
+      slopes.push(slope);
+      slopes.push(
+        dg.xtickmark(
+          pointsToShowSlope[i],
+          0,
+          pointsToShowSlope[i].toString(),
+          axisOpt
+        )
+      );
+    }
+  }
+
   // for some reason, calling draw() twice fix some initial sizing problem
-  draw(axis, graph, axisLabel, ...tickMarks);
-  draw(axis, graph, axisLabel, ...tickMarks);
+  draw(axis, areaUnder, ...areaMark, graph, ...slopes, axisLabel, ...tickMarks);
+  draw(axis, areaUnder, ...areaMark, graph, ...slopes, axisLabel, ...tickMarks);
 
   dg.handle_tex_in_svg(svg, handletex);
 }
