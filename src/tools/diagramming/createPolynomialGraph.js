@@ -68,6 +68,18 @@ export function createPolynomialGraph(parentDiv, parameters) {
       }
     }
   }
+  if (yMin > 0) {
+    yMin = 0;
+  }
+  if (xMin > 0) {
+    xMin = 0;
+  }
+  if (yMax < 0) {
+    yMax = 0;
+  }
+  if (xMax < 0) {
+    xMax = 0;
+  }
 
   // find aspect ratio
   const aspectRatio = 2;
