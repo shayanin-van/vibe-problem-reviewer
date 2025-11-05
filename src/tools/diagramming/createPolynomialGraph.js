@@ -153,7 +153,45 @@ export function createPolynomialGraph(parentDiv, parameters) {
     }
   };
 
-  let graph = dg.plotf(fn, axisOpt).stroke("blue").strokewidth(3);
+  // let graph = dg.plotf(fn, axisOpt).stroke("blue").strokewidth(3);
+
+  let graphs = [];
+  for (let i = 0; i < graphSections.length; i++) {
+    let domain = graphSections[i].domain.xEnd - graphSections[i].domain.xStart;
+    let ratio = domain / (xMax - xMin);
+    let points = [];
+    for (let j = 1; j < ratio * 500; j++) {
+      let x = graphSections[i].domain.xStart + (j * domain) / (ratio * 500);
+      points.push(transf(dg.V2(x, fn(x))));
+    }
+    let graph = dg
+      .curve(points)
+      .stroke("blue")
+      .strokewidth(3)
+      .strokelinecap("round");
+    graphs.push(graph);
+
+    if (i > 0) {
+      let pCurrentStart = transf(
+        dg.V2(
+          graphSections[i].domain.xStart,
+          fn(graphSections[i].domain.xStart + domain / (ratio * 500))
+        )
+      );
+      let pPrevEnd = transf(
+        dg.V2(
+          graphSections[i - 1].domain.xEnd,
+          fn(graphSections[i - 1].domain.xEnd)
+        )
+      );
+      let connector = dg
+        .curve([pPrevEnd, pCurrentStart])
+        .stroke("blue")
+        .strokewidth(2)
+        .strokedasharray([6, 6]);
+      graphs.push(connector);
+    }
+  }
 
   let xLabelDiagram = dg
     .text(xLabel)
@@ -186,6 +224,22 @@ export function createPolynomialGraph(parentDiv, parameters) {
       graphSections[i].c;
     tickMarks.push(dg.ytickmark(yAtXStart, 0, yAtXStart.toString(), axisOpt));
     tickMarks.push(dg.ytickmark(yAtXEnd, 0, yAtXEnd.toString(), axisOpt));
+  }
+
+  let horiGuides = [];
+  for (let i = 0; i < graphSections.length; i++) {
+    let xEnd = graphSections[i].domain.xEnd;
+    let yEnd = fn(xEnd);
+    let p1 = transf(dg.V2(0, yEnd));
+    let p2 = transf(dg.V2(xEnd, yEnd));
+
+    let guide = dg
+      .curve([p1, p2])
+      .stroke("grey")
+      .strokewidth(1)
+      .opacity(0.5)
+      .strokedasharray([6, 10]);
+    horiGuides.push(guide);
   }
 
   let areaUnder = dg.curve([]);
@@ -272,8 +326,26 @@ export function createPolynomialGraph(parentDiv, parameters) {
   }
 
   // for some reason, calling draw() twice fix some initial sizing problem
-  draw(axis, areaUnder, ...areaMark, graph, ...slopes, axisLabel, ...tickMarks);
-  draw(axis, areaUnder, ...areaMark, graph, ...slopes, axisLabel, ...tickMarks);
+  draw(
+    ...horiGuides,
+    axis,
+    areaUnder,
+    ...areaMark,
+    ...graphs,
+    ...slopes,
+    axisLabel,
+    ...tickMarks
+  );
+  draw(
+    ...horiGuides,
+    axis,
+    areaUnder,
+    ...areaMark,
+    ...graphs,
+    ...slopes,
+    axisLabel,
+    ...tickMarks
+  );
 
   dg.handle_tex_in_svg(svg, handletex);
 }
