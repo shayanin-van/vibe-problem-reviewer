@@ -7,13 +7,18 @@ import {
   updateDoc,
 } from "firebase/firestore";
 
+let collectionName = "production";
+if (window.location.hash === "#math") {
+  collectionName = "test";
+}
+
 /**
  * Fetches all problems from Firestore and organizes them by unit > kaiSubtopic > kaiLevel > template
  * @returns {Promise<Object>} Organized problems structure
  */
 export async function fetchProblemsStructure() {
   try {
-    const problemsCol = collection(db, "production");
+    const problemsCol = collection(db, collectionName);
     const problemsSnapshot = await getDocs(problemsCol);
     const problems = {};
 
@@ -54,7 +59,7 @@ export async function fetchProblemsStructure() {
  */
 export async function fetchProblemById(problemId) {
   try {
-    const problemDoc = doc(db, "production", problemId);
+    const problemDoc = doc(db, collectionName, problemId);
     const problemSnapshot = await getDoc(problemDoc);
 
     if (problemSnapshot.exists()) {
@@ -79,7 +84,7 @@ export async function fetchProblemById(problemId) {
  */
 export async function updateProblem(problemId, problemData) {
   try {
-    const problemDoc = doc(db, "production", problemId);
+    const problemDoc = doc(db, collectionName, problemId);
     await updateDoc(problemDoc, problemData);
   } catch (error) {
     console.error("Error updating problem:", error);
