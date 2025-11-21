@@ -6,6 +6,10 @@
  * @returns {string[]} An array where text segments object and valid JSON object are separate elements.
  */
 export function splitByJson(inputString) {
+  // remove markdown json code delimiter
+  inputString = inputString.replaceAll("json", "");
+  inputString = inputString.replaceAll("```", "");
+
   if (typeof inputString !== "string") {
     console.error("Input must be a string.");
     return [];
