@@ -7,7 +7,11 @@
   border-radius: 20px;
   padding: 0px 20px;
   overflow-wrap: anywhere;
-  white-space: pre-wrap;
+}
+
+h2 {
+  font-size: 1em;
+  color: #1f77b4;
 }
 
 @media (orientation: landscape) {
