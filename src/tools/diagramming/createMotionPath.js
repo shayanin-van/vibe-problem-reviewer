@@ -33,7 +33,13 @@ export function createMotionPath(parentDiv, parameters) {
   }
 
   // find aspect ratio
-  const aspectRatio = xRange / yRange;
+  let aspectRatio = xRange / yRange;
+
+  let shrinkingRatio = 1;
+  if (aspectRatio < 1.4) {
+    shrinkingRatio = 1.4 / aspectRatio;
+    aspectRatio = 1.4;
+  }
 
   // clear and reset parentDiv
   parentDiv.innerHTML = "";
@@ -61,7 +67,7 @@ export function createMotionPath(parentDiv, parameters) {
   let labels = [];
   points.forEach((point) => {
     let node = dg
-      .circle(0.025 * xRange)
+      .circle(0.025 * xRange * shrinkingRatio)
       .position(dg.V2(point.x, point.y))
       .fill("lightblue")
       .stroke("white")
@@ -89,7 +95,7 @@ export function createMotionPath(parentDiv, parameters) {
     lastPoint.y - firstPoint.y
   );
   let displacement = dg.annotation
-    .vector(displacementVect, "", dg.V2(0.0), 0.03 * xRange)
+    .vector(displacementVect, "", dg.V2(0.0), 0.03 * xRange * shrinkingRatio)
     .position(dg.V2(firstPoint.x, firstPoint.y))
     .fill("lightred")
     .stroke("lightred")
@@ -110,7 +116,13 @@ export function createMotionPath(parentDiv, parameters) {
     ).toFixed(0);
     lengths.push(
       dg.annotation
-        .length(point1, point2, length.toString(), 0.03 * xRange, 0.03 * xRange)
+        .length(
+          point1,
+          point2,
+          length.toString(),
+          0.03 * xRange * shrinkingRatio,
+          0.03 * xRange * shrinkingRatio
+        )
         .opacity(0)
     );
   }
