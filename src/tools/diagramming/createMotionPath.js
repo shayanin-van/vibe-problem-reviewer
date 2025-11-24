@@ -36,9 +36,9 @@ export function createMotionPath(parentDiv, parameters) {
   let aspectRatio = xRange / yRange;
 
   let shrinkingRatio = 1;
-  if (aspectRatio < 1.4) {
-    shrinkingRatio = 1.4 / aspectRatio;
-    aspectRatio = 1.4;
+  if (aspectRatio < 2) {
+    shrinkingRatio = 2 / aspectRatio;
+    aspectRatio = 2;
   }
 
   // clear and reset parentDiv
