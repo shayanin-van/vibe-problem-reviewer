@@ -8,8 +8,8 @@ import {
 } from "firebase/firestore";
 
 let collectionName = "production";
-if (window.location.hash === "#math") {
-  collectionName = "test";
+if (window.location.hash === "#mathDemo") {
+  collectionName = "mathDemo";
 }
 
 /**
