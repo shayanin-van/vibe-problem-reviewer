@@ -4,6 +4,8 @@ import { createInclinedPlane } from "../../../tools/diagramming/createInclinedPl
 import { createMotionPath } from "../../../tools/diagramming/createMotionPath";
 import { createRectilinearMotion } from "../../../tools/diagramming/createRectilinaerMotion";
 import { createPolynomialGraph } from "../../../tools/diagramming/createPolynomialGraph";
+import { create2SetsVenn } from "../../../tools/diagramming/create2SetsVenn";
+import { create3SetsVenn } from "../../../tools/diagramming/create3SetsVenn";
 
 function Diagram({ objJson }) {
   const divRef = useRef(null);
@@ -17,6 +19,10 @@ function Diagram({ objJson }) {
       createRectilinearMotion(divRef.current, objJson.parameters);
     } else if (objJson.name == "create_polynomial_graph") {
       createPolynomialGraph(divRef.current, objJson.parameters);
+    } else if (objJson.name == "create_2sets_venn_diagram") {
+      create2SetsVenn(divRef.current, objJson.parameters);
+    } else if (objJson.name == "create_3sets_venn_diagram") {
+      create3SetsVenn(divRef.current, objJson.parameters);
     } else {
       divRef.current.innerHTML = "";
     }
