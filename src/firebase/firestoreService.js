@@ -10,6 +10,8 @@ import {
 let collectionName = "production";
 if (window.location.hash === "#mathDemo") {
   collectionName = "mathDemo";
+} else if (window.location.hash === "#engDemo") {
+  collectionName = "engDemo";
 }
 
 /**
