@@ -12,6 +12,8 @@ if (window.location.hash === "#mathDemo") {
   collectionName = "mathDemo";
 } else if (window.location.hash === "#engDemo") {
   collectionName = "engDemo";
+} else if (window.location.hash === "#LEPlanetAndStar") {
+  collectionName = "LEPlanetAndStar";
 }
 
 /**
