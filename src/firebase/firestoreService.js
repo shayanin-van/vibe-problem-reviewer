@@ -14,6 +14,12 @@ if (window.location.hash === "#mathDemo") {
   collectionName = "engDemo";
 } else if (window.location.hash === "#LEPlanetAndStar") {
   collectionName = "LEPlanetAndStar";
+} else if (window.location.hash === "#LEAtmosphere") {
+  collectionName = "LEAtmosphere";
+} else if (window.location.hash === "#LEData") {
+  collectionName = "LEData";
+} else if (window.location.hash === "#LEGeometry") {
+  collectionName = "LEGeometry";
 }
 
 /**
