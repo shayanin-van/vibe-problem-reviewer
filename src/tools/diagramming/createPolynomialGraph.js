@@ -175,14 +175,14 @@ export function createPolynomialGraph(parentDiv, parameters) {
       let pCurrentStart = transf(
         dg.V2(
           graphSections[i].domain.xStart,
-          fn(graphSections[i].domain.xStart + domain / (ratio * 500))
-        )
+          fn(graphSections[i].domain.xStart + domain / (ratio * 500)),
+        ),
       );
       let pPrevEnd = transf(
         dg.V2(
           graphSections[i - 1].domain.xEnd,
-          fn(graphSections[i - 1].domain.xEnd)
-        )
+          fn(graphSections[i - 1].domain.xEnd),
+        ),
       );
       let connector = dg
         .curve([pPrevEnd, pCurrentStart])
@@ -250,7 +250,7 @@ export function createPolynomialGraph(parentDiv, parameters) {
         fn,
         intervalsToShowArea.xStart,
         intervalsToShowArea.xEnd,
-        axisOpt
+        axisOpt,
       )
       .fill("lightblue")
       .opacity(0.5)
@@ -261,16 +261,16 @@ export function createPolynomialGraph(parentDiv, parameters) {
         intervalsToShowArea.xStart,
         0,
         intervalsToShowArea.xStart.toString(),
-        axisOpt
-      )
+        axisOpt,
+      ),
     );
     areaMark.push(
       dg.xtickmark(
         intervalsToShowArea.xEnd,
         0,
         intervalsToShowArea.xEnd.toString(),
-        axisOpt
-      )
+        axisOpt,
+      ),
     );
     let yAtXStart = fn(intervalsToShowArea.xStart);
     let yAtXEnd = fn(intervalsToShowArea.xEnd);
@@ -286,20 +286,20 @@ export function createPolynomialGraph(parentDiv, parameters) {
         .fill("lightred")
         .strokewidth(0)
         .position(
-          transf(dg.V2(pointsToShowSlope[i], fn(pointsToShowSlope[i])))
+          transf(dg.V2(pointsToShowSlope[i], fn(pointsToShowSlope[i]))),
         );
       let angle = Math.atan(dFn(pointsToShowSlope[i]));
       let lineStart = transf(
         dg.V2(
           pointsToShowSlope[i] - Math.cos(angle),
-          fn(pointsToShowSlope[i]) - Math.sin(angle)
-        )
+          fn(pointsToShowSlope[i]) - Math.sin(angle),
+        ),
       );
       let lineEnd = transf(
         dg.V2(
           pointsToShowSlope[i] + Math.cos(angle),
-          fn(pointsToShowSlope[i]) + Math.sin(angle)
-        )
+          fn(pointsToShowSlope[i]) + Math.sin(angle),
+        ),
       );
       let tranfV2 = lineEnd.sub(lineStart);
       let tranfAngle = Math.atan2(tranfV2.y, tranfV2.x);
@@ -309,7 +309,7 @@ export function createPolynomialGraph(parentDiv, parameters) {
         .strokewidth(3.5)
         .stroke("red")
         .position(
-          transf(dg.V2(pointsToShowSlope[i], fn(pointsToShowSlope[i])))
+          transf(dg.V2(pointsToShowSlope[i], fn(pointsToShowSlope[i]))),
         );
       let slope = dg.diagram_combine(slopeLine, slopeDot);
 
@@ -319,8 +319,8 @@ export function createPolynomialGraph(parentDiv, parameters) {
           pointsToShowSlope[i],
           0,
           pointsToShowSlope[i].toString(),
-          axisOpt
-        )
+          axisOpt,
+        ),
       );
     }
   }
@@ -334,7 +334,7 @@ export function createPolynomialGraph(parentDiv, parameters) {
     ...graphs,
     ...slopes,
     axisLabel,
-    ...tickMarks
+    ...tickMarks,
   );
   draw(
     ...horiGuides,
@@ -344,7 +344,7 @@ export function createPolynomialGraph(parentDiv, parameters) {
     ...graphs,
     ...slopes,
     axisLabel,
-    ...tickMarks
+    ...tickMarks,
   );
 
   dg.handle_tex_in_svg(svg, handletex);
