@@ -119,7 +119,7 @@ export function createRectilinearMotion(parentDiv, parameters) {
         dg.V2(0.2 * sRange * Math.sign(a), 0),
         "a = " + a.toFixed(1) + " m/s²",
         dg.V2(-(0.1 * sRange * Math.sign(a)), 0.04 * sRange),
-        0.02 * sRange
+        0.02 * sRange,
       )
       .fill("red")
       .stroke("red")
@@ -131,7 +131,7 @@ export function createRectilinearMotion(parentDiv, parameters) {
         dg.V2(0, 0.2 * sRange * Math.sign(a)),
         "a = " + a.toFixed(1) + " m/s²",
         dg.V2(0.12 * sRange, -(0.1 * sRange * Math.sign(a))),
-        0.02 * sRange
+        0.02 * sRange,
       )
       .fill("red")
       .stroke("red")
@@ -167,7 +167,7 @@ export function createRectilinearMotion(parentDiv, parameters) {
           dg.V2(velScaleFactor * currentVel, 0),
           currentVel.toFixed(1) + " m/s",
           dg.V2(-((velScaleFactor / 2) * currentVel), 0.04 * sRange),
-          0.02 * sRange
+          0.02 * sRange,
         )
         .fill("blue")
         .stroke("blue")
@@ -178,7 +178,7 @@ export function createRectilinearMotion(parentDiv, parameters) {
           dg.V2(0, velScaleFactor * currentVel),
           currentVel.toFixed(1) + " m/s",
           dg.V2(0.12 * sRange, -((velScaleFactor / 2) * currentVel)),
-          0.02 * sRange
+          0.02 * sRange,
         )
         .fill("blue")
         .stroke("blue")
@@ -195,7 +195,7 @@ export function createRectilinearMotion(parentDiv, parameters) {
         "s = " + currentPos.toFixed(1) + " m",
         0.06 * sRange * Math.sign(currentPos),
         0.03 * sRange,
-        0.1 * sRange * Math.sign(currentPos)
+        0.1 * sRange * Math.sign(currentPos),
       );
     } else {
       sVect = dg.annotation.length(
@@ -204,7 +204,7 @@ export function createRectilinearMotion(parentDiv, parameters) {
         "s = " + currentPos.toFixed(1) + " m",
         -0.1 * sRange * Math.sign(currentPos),
         0.03 * sRange,
-        -0.2 * sRange * Math.sign(currentPos)
+        -0.2 * sRange * Math.sign(currentPos),
       );
     }
 
